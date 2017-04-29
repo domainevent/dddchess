@@ -1,6 +1,8 @@
 package com.javacook.dddchess.api;
 
+import com.javacook.dddchess.domain.FigureValueObject;
 import com.javacook.dddchess.domain.MoveValueObject;
+import com.javacook.dddchess.domain.PositionValueObject;
 import scala.concurrent.Future;
 
 /**
@@ -9,5 +11,9 @@ import scala.concurrent.Future;
 public interface ChessGameApi {
 
     Future<Object> move(MoveValueObject move);
+
+    MoveValueObject getMove(int index);
+
+    FigureValueObject figureAt(PositionValueObject position);
 
 }
