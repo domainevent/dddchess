@@ -1,12 +1,18 @@
 package com.javacook.dddchess.domain;
 
 
+import javax.xml.bind.annotation.XmlEnum;
+import javax.xml.bind.annotation.XmlType;
+
+
 /**
  * Value Object
  */
+@XmlType
 public class PositionValueObject {
 
-    public enum HorCord {
+    @XmlEnum
+    public enum HorCoord {
         A, B, C, D, E, F, G, H;
 
         @Override
@@ -15,7 +21,8 @@ public class PositionValueObject {
         }
     }
 
-    public enum VertCord {
+    @XmlEnum
+    public enum VertCoord {
         _1, _2, _3, _4, _5, _6, _7, _8;
 
         @Override
@@ -24,23 +31,29 @@ public class PositionValueObject {
         }
     }
 
-    public final HorCord horCord;
-    public final VertCord vertCord;
+    public final HorCoord horCoord;
+    public final VertCoord vertCoord;
 
-    public PositionValueObject(HorCord horCoord, VertCord vertCoord) {
-        this.horCord = horCoord;
-        this.vertCord = vertCoord;
+    public PositionValueObject(HorCoord horCoord, VertCoord vertCoord) {
+        this.horCoord = horCoord;
+        this.vertCoord = vertCoord;
     }
 
+
+    public PositionValueObject() {
+        this(null, null);
+    }
+
+
     public PositionValueObject(String coordEncoded) {
-        horCord = HorCord.valueOf(coordEncoded.substring(0,1).toUpperCase());
-        vertCord = VertCord.valueOf("_" + coordEncoded.substring(1,2));
+        horCoord = HorCoord.valueOf(coordEncoded.substring(0,1).toUpperCase());
+        vertCoord = VertCoord.valueOf("_" + coordEncoded.substring(1,2));
     }
 
 
     @Override
     public String toString() {
-        return horCord.toString() + vertCord.toString();
+        return horCoord.toString() + vertCoord.toString();
     }
 
     @Override
@@ -50,14 +63,14 @@ public class PositionValueObject {
 
         PositionValueObject positionValueObject = (PositionValueObject) o;
 
-        if (horCord != positionValueObject.horCord) return false;
-        return vertCord == positionValueObject.vertCord;
+        if (horCoord != positionValueObject.horCoord) return false;
+        return vertCoord == positionValueObject.vertCoord;
     }
 
     @Override
     public int hashCode() {
-        int result = horCord != null ? horCord.hashCode() : 0;
-        result = 31 * result + (vertCord != null ? vertCord.hashCode() : 0);
+        int result = horCoord != null ? horCoord.hashCode() : 0;
+        result = 31 * result + (vertCoord != null ? vertCoord.hashCode() : 0);
         return result;
     }
 
