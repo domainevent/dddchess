@@ -6,7 +6,7 @@ import com.javacook.dddchess.domain.PositionValueObject;
 import scala.concurrent.Future;
 
 /**
- * Created by vollmer on 21.04.17.
+ * Created by javacook on 21.04.17.
  */
 public interface ChessGameApi {
 

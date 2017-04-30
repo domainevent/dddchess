@@ -3,7 +3,7 @@ package com.javacook.dddchess.domain;
 import java.util.Date;
 
 /**
- * Created by vollmer on 21.04.17.
+ * Created by javacook on 21.04.17.
  */
 public class MovedEvent {
 

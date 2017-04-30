@@ -17,7 +17,7 @@ import static com.javacook.dddchess.domain.FigureValueObject.FigureEnum.KING;
 
 
 /**
- * Created by vollmer on 21.04.17.
+ * Created by javacook on 21.04.17.
  */
 public class ChessGameApiImpl implements ChessGameApi {
 

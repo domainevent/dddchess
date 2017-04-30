@@ -7,7 +7,7 @@ import javax.ws.rs.ext.Provider;
 
 
 /**
- * Created by vollmer on 29.04.17.
+ * Created by javacook on 29.04.17.
  */
 @Provider
 public class RestException extends Exception implements ExceptionMapper<Exception> {
