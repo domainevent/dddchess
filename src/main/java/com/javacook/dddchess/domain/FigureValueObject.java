@@ -8,7 +8,7 @@ public class FigureValueObject {
 
     @XmlEnum
     public enum FigureEnum {
-        KING, QUENN, ROCK, BISHOP, KNIGHT, PAWN
+        KING, QUEEN, ROCK, BISHOP, KNIGHT, PAWN
     };
 
     @XmlEnum
