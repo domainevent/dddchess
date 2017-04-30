@@ -19,6 +19,20 @@ public class PositionValueObject {
         public String toString() {
             return name().toLowerCase();
         }
+
+        public HorCoord next() {
+            switch (this) {
+                case A: return B;
+                case B: return C;
+                case C: return D;
+                case D: return E;
+                case E: return F;
+                case F: return G;
+                case G: return H;
+                case H: return null;
+            }
+            throw new IllegalStateException();
+        }
     }
 
     @XmlEnum
@@ -76,6 +90,7 @@ public class PositionValueObject {
 
     public static void main(String[] args) {
         System.out.println(new PositionValueObject("a1"));
+        System.out.println(HorCoord.values().length);
     }
 
 }
