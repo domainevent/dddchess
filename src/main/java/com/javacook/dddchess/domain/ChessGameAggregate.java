@@ -20,10 +20,12 @@ public class ChessGameAggregate extends AbstractActor {
     }
 
 
+    /**
+     * Constructor
+     */
     public ChessGameAggregate() {
         initializeCommandHandler();
     }
-
 
     private void initializeCommandHandler() {
         receive(ReceiveBuilder.
@@ -37,10 +39,14 @@ public class ChessGameAggregate extends AbstractActor {
         );
     }
 
+    final ChessGameRepository chessGameRepository = new ChessGameRepository();
 
-    // Fachlichkeit
+    // Business
     //
     public Integer move(MoveValueObject move) {
+
+        final ChessBoardValueObject chessBoard = chessGameRepository.findChessBoard();
+
         this.getContext().system().eventStream().publish(new MovedEvent(move));
         return move.hashCode();
     }
