@@ -6,6 +6,9 @@ import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import akka.japi.pf.ReceiveBuilder;
 
+import static com.javacook.dddchess.domain.FigureValueObject.ColorEnum.WHITE;
+
+
 public class ChessGameAggregate extends AbstractActor {
 
     LoggingAdapter log = Logging.getLogger(getContext().system(), this);
@@ -19,12 +22,15 @@ public class ChessGameAggregate extends AbstractActor {
         log.debug("Starting Chess Game");
     }
 
+    final ChessGameRepository chessGameRepository = new ChessGameRepository();
+
 
     /**
      * Constructor
      */
     public ChessGameAggregate() {
         initializeCommandHandler();
+        chessGameRepository.findChessBoard().initialize(WHITE); // FIXME javacook
     }
 
     private void initializeCommandHandler() {
@@ -39,13 +45,13 @@ public class ChessGameAggregate extends AbstractActor {
         );
     }
 
-    final ChessGameRepository chessGameRepository = new ChessGameRepository();
 
     // Business
     //
-    public Integer move(MoveValueObject move) {
+    public Integer move(MoveValueObject move) throws MoveException {
 
         final ChessBoardValueObject chessBoard = chessGameRepository.findChessBoard();
+        chessBoard.performMove(move);
 
         this.getContext().system().eventStream().publish(new MovedEvent(move));
         return move.hashCode();
