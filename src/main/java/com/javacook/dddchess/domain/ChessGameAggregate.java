@@ -2,6 +2,7 @@ package com.javacook.dddchess.domain;
 
 import akka.actor.AbstractActor;
 import akka.actor.Props;
+import akka.actor.Status;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import akka.japi.pf.ReceiveBuilder;
@@ -38,8 +39,15 @@ public class ChessGameAggregate extends AbstractActor {
                 match(MoveCommand.class, moveCommand -> {
                     log.info("received MoveCommand: " + moveCommand);
                     // TimeUnit.SECONDS.sleep(3);
-                    final Integer result = this.move(moveCommand.move);
-                    sender().tell(result, self());
+                    try {
+                        final Integer result = this.performMove(moveCommand.move);
+                        sender().tell(result, self());
+                    }
+                    catch (MoveException e) {
+                        final Status.Failure failure = new Status.Failure(e);
+                        sender().tell(failure, self());
+                    }
+
                 }).
                 matchAny(o -> log.warning("Received unknown message!")).build()
         );
@@ -48,13 +56,13 @@ public class ChessGameAggregate extends AbstractActor {
 
     // Business
     //
-    public Integer move(MoveValueObject move) throws MoveException {
+    public Integer performMove(MoveValueObject move) throws MoveException {
 
-        final ChessBoardValueObject chessBoard = chessGameRepository.findChessBoard();
-        chessBoard.performMove(move);
+        final ChessBoardEntity chessBoard = chessGameRepository.findChessBoard();
+        final int countMoves = chessBoard.performMove(move);
 
         this.getContext().system().eventStream().publish(new MovedEvent(move));
-        return move.hashCode();
+        return countMoves;
     }
 
 }
