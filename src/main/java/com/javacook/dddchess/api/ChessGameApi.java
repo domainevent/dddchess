@@ -10,7 +10,7 @@ import scala.concurrent.Future;
  */
 public interface ChessGameApi {
 
-    Future<Object> move(MoveValueObject move);
+    Future<Object> performMove(MoveValueObject move);
 
     MoveValueObject getMove(int index);
 

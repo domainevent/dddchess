@@ -87,7 +87,7 @@ public class RestService {
         log.info("Try to perform the performMove {}", move);
 
         // API-Call:
-        final Future<Object> future = chessGameApi.move(move);
+        final Future<Object> future = chessGameApi.performMove(move);
 
         future.onComplete(new OnComplete<Object>() {
 
@@ -111,6 +111,6 @@ public class RestService {
                 }
             }
         }, actorSystem.dispatcher());
-    }// performMove
+    }// postMove
 
 }

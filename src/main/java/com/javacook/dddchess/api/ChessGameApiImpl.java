@@ -27,7 +27,7 @@ public class ChessGameApiImpl implements ChessGameApi {
         this.actorSystem = actorSystem;
     }
 
-    public Future<Object> move(MoveValueObject move) {
+    public Future<Object> performMove(MoveValueObject move) {
         ActorSelection chessGameActor = actorSystem.actorSelection("/user/chessGame");
         Timeout timeout = new Timeout(Duration.create(2, "seconds"));
         return Patterns.ask(chessGameActor, new MoveCommand(move), timeout);
