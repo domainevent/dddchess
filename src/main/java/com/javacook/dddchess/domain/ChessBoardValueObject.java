@@ -4,6 +4,8 @@ import com.javacook.dddchess.domain.FigureValueObject.ColorEnum;
 import com.javacook.dddchess.domain.PositionValueObject.HorCoord;
 import com.javacook.dddchess.domain.PositionValueObject.VertCoord;
 
+import java.util.Optional;
+
 import static com.javacook.dddchess.domain.FigureValueObject.ColorEnum.*;
 import static com.javacook.dddchess.domain.FigureValueObject.FigureEnum.*;
 import static com.javacook.dddchess.domain.PositionValueObject.HorCoord.*;
@@ -22,18 +24,27 @@ public class ChessBoardValueObject {
     ColorEnum lastMoveColor;
 
     public void performMove(MoveValueObject move) throws MoveException {
-        final FigureValueObject figureFrom = getFigureAtPosition(move.from);
+        final Optional<FigureValueObject> figureFrom = getFigureAtPosition(move.from);
+        if (!figureFrom.isPresent()) {
+            throw new MoveException();
+        }
+        else if (figureFrom.get().color == lastMoveColor) {
+            throw new MoveException();
+        }
+        // validation
         setFigure(move.from, null);
-        setFigure(move.to, figureFrom);
+        setFigure(move.to, figureFrom.get());
+        lastMoveColor = figureFrom.get().color;
+        System.out.println("Color " + lastMoveColor);
         System.out.println(printBoard());
     }
 
-    FigureValueObject getFigureAtPosition(PositionValueObject position) {
+    Optional<FigureValueObject> getFigureAtPosition(PositionValueObject position) {
         return getFigureAtPosition(position.horCoord, position.vertCoord);
     }
 
-    FigureValueObject getFigureAtPosition(HorCoord horCoord, VertCoord vertCoord) {
-        return board[horCoord.ordinal()][vertCoord.ordinal()];
+    Optional<FigureValueObject> getFigureAtPosition(HorCoord horCoord, VertCoord vertCoord) {
+        return Optional.ofNullable(board[horCoord.ordinal()][vertCoord.ordinal()]);
     }
 
     void setFigure(PositionValueObject position, FigureValueObject figure) {
@@ -97,8 +108,8 @@ public class ChessBoardValueObject {
         for(VertCoord vertCoord : VertCoord.valuesInverted()) {
             boardAsStr += "|";
             for(HorCoord horCoord : HorCoord.values()) {
-                final FigureValueObject figure = getFigureAtPosition(horCoord, vertCoord);
-                boardAsStr += (figure == null)? "  " : figure.abbreviation();
+                final Optional<FigureValueObject> figure = getFigureAtPosition(horCoord, vertCoord);
+                boardAsStr += figure.isPresent()? figure.get().abbreviation() : "  ";
                 boardAsStr += "|";
             }
             boardAsStr += System.lineSeparator() + horLine;
