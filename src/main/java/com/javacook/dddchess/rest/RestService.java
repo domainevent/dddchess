@@ -6,6 +6,7 @@ import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import com.javacook.dddchess.api.ChessGameApi;
 import com.javacook.dddchess.domain.FigureValueObject;
+import com.javacook.dddchess.domain.MoveException;
 import com.javacook.dddchess.domain.MoveValueObject;
 import com.javacook.dddchess.domain.PositionValueObject;
 import com.javacook.dddchess.domain.PositionValueObject.HorCoord;
@@ -68,6 +69,9 @@ public class RestService {
     public void postMove(@FormParam("move") String move,
                          @Suspended final AsyncResponse resp) {
 
+        if (move == null) {
+            throw new BadRequestException("Missing form parameter 'move'");
+        }
         postMove(new MoveValueObject(move), resp);
     }
 
@@ -80,7 +84,7 @@ public class RestService {
     public void postMove(MoveValueObject move,
                          @Suspended final AsyncResponse resp) {
 
-        log.info("Try to perform the move {}", move);
+        log.info("Try to perform the performMove {}", move);
 
         // API-Call:
         final Future<Object> future = chessGameApi.move(move);
@@ -89,19 +93,24 @@ public class RestService {
 
             public void onComplete(Throwable failure, Object result) {
                 if (failure == null) {
-                    log.info("Move result: " + result);
+                    log.info("Move index: " + result);
                     HashMap<String, Object> response = new HashMap<>();
-                    response.put("results", result);
+                    response.put("move index", result);
                     resp.resume(Response.ok().entity(response).build());
                 }
                 else {
                     log.error(failure, failure.getMessage());
                     HashMap<String, String> response = new HashMap<>();
-                    response.put("error", failure.getMessage());
-                    resp.resume(Response.serverError().entity(response).build());
+                    if (failure instanceof MoveException) {
+                        response.put("invalid move", failure.getMessage());
+                        resp.resume(Response.status(422).entity(response).build());
+                    }
+                    else {
+                        resp.resume(Response.serverError().entity(failure).build());
+                    }
                 }
             }
         }, actorSystem.dispatcher());
-    }// move
+    }// performMove
 
 }
