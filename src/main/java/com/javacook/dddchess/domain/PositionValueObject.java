@@ -19,31 +19,23 @@ public class PositionValueObject {
         public String toString() {
             return name().toLowerCase();
         }
-
-        public HorCoord next() {
-            switch (this) {
-                case A: return B;
-                case B: return C;
-                case C: return D;
-                case D: return E;
-                case E: return F;
-                case F: return G;
-                case G: return H;
-                case H: return null;
-            }
-            throw new IllegalStateException();
-        }
     }
+
 
     @XmlEnum
     public enum VertCoord {
         _1, _2, _3, _4, _5, _6, _7, _8;
+
+        public static VertCoord[] valuesInverted() {
+            return new VertCoord[]{_8, _7, _6, _5, _4, _3, _2, _1};
+        }
 
         @Override
         public String toString() {
             return String.valueOf(ordinal()+1);
         }
     }
+
 
     public final HorCoord horCoord;
     public final VertCoord vertCoord;
