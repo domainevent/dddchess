@@ -10,7 +10,7 @@ import javax.ws.rs.ext.Provider;
  * Created by javacook on 29.04.17.
  */
 @Provider
-public class RestException extends Exception implements ExceptionMapper<Exception> {
+public class RestExceptionMapper extends Exception implements ExceptionMapper<Exception> {
 
     @Override
     public Response toResponse(Exception e) {
