@@ -5,13 +5,13 @@ package com.javacook.dddchess.domain;
  */
 public class ChessGameRepository {
 
-    private static ChessBoardValueObject chessBoard = new ChessBoardValueObject();
+    private static ChessBoardEntity chessBoard = new ChessBoardEntity();
 
-    ChessBoardValueObject findChessBoard() {
+    ChessBoardEntity findChessBoard() {
         return chessBoard;
     }
 
-    void saveChessBoard(ChessBoardValueObject chessBoard) {
+    void saveChessBoard(ChessBoardEntity chessBoard) {
         ChessGameRepository.chessBoard = chessBoard;
     }
 
