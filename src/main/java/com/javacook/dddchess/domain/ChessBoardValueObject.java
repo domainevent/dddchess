@@ -23,10 +23,21 @@ public class ChessBoardValueObject {
 
     public void performMove(MoveValueObject move) throws MoveException {
         final FigureValueObject figureFrom = getFigureAtPosition(move.from);
+        setFigure(move.from, null);
+        setFigure(move.to, figureFrom);
+        System.out.println(printBoard());
     }
 
     FigureValueObject getFigureAtPosition(PositionValueObject position) {
-        return board[position.horCoord.ordinal()][position.vertCoord.ordinal()];
+        return getFigureAtPosition(position.horCoord, position.vertCoord);
+    }
+
+    FigureValueObject getFigureAtPosition(HorCoord horCoord, VertCoord vertCoord) {
+        return board[horCoord.ordinal()][vertCoord.ordinal()];
+    }
+
+    void setFigure(PositionValueObject position, FigureValueObject figure) {
+        setFigure(position.horCoord, position.vertCoord, figure);
     }
 
     void setFigure(HorCoord horCoord, VertCoord vertCoord, FigureValueObject figure) {
@@ -38,7 +49,7 @@ public class ChessBoardValueObject {
      *
      * @param bottomColor Color of the figures at the bottom of the board starting with a1
      */
-    void initialize(ColorEnum bottomColor) {
+    public void initialize(ColorEnum bottomColor) {
         setFigure(A, _1, new FigureValueObject(ROCK, bottomColor));
         setFigure(B, _1, new FigureValueObject(KNIGHT, bottomColor));
         setFigure(C, _1, new FigureValueObject(BISHOP, bottomColor));
@@ -54,7 +65,7 @@ public class ChessBoardValueObject {
         setFigure(G, _1, new FigureValueObject(KNIGHT, bottomColor));
         setFigure(H, _1, new FigureValueObject(ROCK, bottomColor));
 
-        for (HorCoord coord = A; coord.next() != null; coord = coord.next()) {
+        for (HorCoord coord : HorCoord.values()) {
             setFigure(coord, _2, new FigureValueObject(PAWN, bottomColor));
         }
 
@@ -75,9 +86,28 @@ public class ChessBoardValueObject {
         setFigure(G, _8, new FigureValueObject(KNIGHT, topColor));
         setFigure(H, _8, new FigureValueObject(ROCK, topColor));
 
-        for (HorCoord coord = A; coord.next() != null; coord = coord.next()) {
+        for (HorCoord coord : HorCoord.values()) {
             setFigure(coord, _7, new FigureValueObject(PAWN, topColor));
         }
     }
+
+    public String printBoard() {
+        final String horLine = "-------------------------";
+        String boardAsStr = horLine + System.lineSeparator();
+        for(VertCoord vertCoord : VertCoord.valuesInverted()) {
+            boardAsStr += "|";
+            for(HorCoord horCoord : HorCoord.values()) {
+                final FigureValueObject figure = getFigureAtPosition(horCoord, vertCoord);
+                boardAsStr += (figure == null)? "  " : figure.abbreviation();
+                boardAsStr += "|";
+            }
+            boardAsStr += System.lineSeparator() + horLine;
+            if (vertCoord != _1) {
+                boardAsStr += System.lineSeparator();
+            }
+        }
+        return boardAsStr;
+    }
+
 
 }
