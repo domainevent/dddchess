@@ -8,12 +8,32 @@ public class FigureValueObject {
 
     @XmlEnum
     public enum FigureEnum {
-        KING, QUEEN, ROCK, BISHOP, KNIGHT, PAWN
+        KING, QUEEN, ROCK, BISHOP, KNIGHT, PAWN;
+
+        public Character abbreviation() {
+            switch (this) {
+                case KING: return 'K';
+                case QUEEN: return 'Q';
+                case ROCK: return 'R';
+                case BISHOP: return 'B';
+                case KNIGHT: return 'N';
+                case PAWN: return 'P';
+            }
+            throw new IllegalArgumentException("Unexpected enum " + this);
+        }
     };
 
     @XmlEnum
     public enum ColorEnum {
-        WHITE, BLACK
+        WHITE, BLACK;
+
+        public Character abbreviation() {
+            switch (this) {
+                case WHITE: return 'w';
+                case BLACK: return 'b';
+            }
+            throw new IllegalArgumentException("Unexpected enum " + this);
+        }
     };
 
     public final FigureEnum figure;
@@ -57,5 +77,9 @@ public class FigureValueObject {
                 "figure=" + figure +
                 ", color=" + color +
                 '}';
+    }
+
+    public String abbreviation() {
+        return "" + figure.abbreviation() + color.abbreviation();
     }
 }
