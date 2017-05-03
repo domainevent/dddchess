@@ -11,10 +11,9 @@ import javax.ws.rs.ext.Provider;
 public class NotFoundExceptionMapper implements ExceptionMapper<NotFoundException> {
 
     public Response toResponse(NotFoundException exception) {
-
-        return Response.status(Response.Status.NOT_FOUND).
-                entity(Response.status(Response.Status.NOT_FOUND)
-                        .entity(exception.getMessage()).type(MediaType.TEXT_PLAIN).build()).
-                build();
+        return Response
+                .status(Response.Status.NOT_FOUND)
+                .entity(exception.getMessage())
+                .type(MediaType.TEXT_PLAIN).build();
     }
 }
