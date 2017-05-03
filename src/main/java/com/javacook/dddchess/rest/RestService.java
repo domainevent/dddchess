@@ -18,11 +18,11 @@ import javax.annotation.PostConstruct;
 import javax.ws.rs.*;
 import javax.ws.rs.container.AsyncResponse;
 import javax.ws.rs.container.Suspended;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.core.*;
+import java.net.URI;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Optional;
 
 
 @Path("/chessgame")
@@ -30,8 +30,13 @@ public class RestService {
 
     @Context
     ActorSystem actorSystem;
+
     @Context
     ChessGameApi chessGameApi;
+
+    @Context
+    UriInfo uriInfo;
+
     LoggingAdapter log;
 
 
@@ -58,6 +63,21 @@ public class RestService {
 
         log.info("Get figure at horCoord={}, vertCoord={}", horCoord, vertCoord);
         return chessGameApi.figureAt(new PositionValueObject(horCoord, vertCoord));
+    }
+
+
+    @GET
+    @Path("move/{index}")
+    @Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
+    public MoveValueObject getMove(@PathParam("index") int index) {
+        log.info("Get {}th move", index);
+        final Optional<MoveValueObject> move = chessGameApi.getMove(index);
+        if (move.isPresent()) {
+            return move.get();
+        }
+        else {
+            throw new NotFoundException("There is no move present for index " + index);
+        }
     }
 
 
@@ -94,16 +114,20 @@ public class RestService {
             public void onComplete(Throwable failure, Object result) {
                 if (failure == null) {
                     log.info("Move index: " + result);
-                    HashMap<String, Object> response = new HashMap<>();
-                    response.put("move index", result);
-                    resp.resume(Response.ok().entity(response).build());
+                    HashMap<String, Object> json = new HashMap<>();
+                    json.put("index", result);
+                    UriBuilder ub = uriInfo.getAbsolutePathBuilder();
+                    URI location = ub.path(result.toString()).build();
+                    resp.resume(Response.created(location).entity(json).build());
                 }
                 else {
+                    // FIXME: TIMEOUT-Fall behandeln
                     log.error(failure, failure.getMessage());
-                    HashMap<String, String> response = new HashMap<>();
+                    HashMap<String, Object> json = new HashMap<>();
                     if (failure instanceof MoveException) {
-                        response.put("invalid move", failure.getMessage());
-                        resp.resume(Response.status(422).entity(response).build());
+                        json.put("error code", ErrorCode.INVALID_MOVE);
+                        json.put(ErrorCode.INVALID_MOVE.name(), failure.getMessage());
+                        resp.resume(Response.status(422).entity(json).build());
                     }
                     else {
                         resp.resume(Response.serverError().entity(failure).build());
