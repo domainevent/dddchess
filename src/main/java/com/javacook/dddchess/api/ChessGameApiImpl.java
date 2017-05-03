@@ -4,13 +4,13 @@ import akka.actor.ActorSelection;
 import akka.actor.ActorSystem;
 import akka.pattern.Patterns;
 import akka.util.Timeout;
-import com.javacook.dddchess.domain.FigureValueObject;
-import com.javacook.dddchess.domain.MoveValueObject;
-import com.javacook.dddchess.domain.MoveCommand;
-import com.javacook.dddchess.domain.PositionValueObject;
+import com.javacook.dddchess.domain.*;
+import scala.concurrent.Await;
+import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
 
-import scala.concurrent.Future;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import static com.javacook.dddchess.domain.FigureValueObject.ColorEnum.BLACK;
 import static com.javacook.dddchess.domain.FigureValueObject.FigureEnum.KING;
@@ -35,8 +35,17 @@ public class ChessGameApiImpl implements ChessGameApi {
 
 
     @Override
-    public MoveValueObject getMove(int index) {
-        return null;
+    public Optional<MoveValueObject> getMove(int index) {
+        ActorSelection chessGameActor = actorSystem.actorSelection("/user/chessGame");
+        Timeout timeout = new Timeout(Duration.create(2, "seconds"));
+        Future<Object> future = Patterns.ask(chessGameActor, new GetMoveCommand(index), timeout);
+        try {
+            final Object result = Await.result(future, Duration.create(2, TimeUnit.SECONDS));
+            return (Optional<MoveValueObject>)result;
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 

@@ -7,6 +7,8 @@ import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import akka.japi.pf.ReceiveBuilder;
 
+import java.util.Optional;
+
 import static com.javacook.dddchess.domain.FigureValueObject.ColorEnum.WHITE;
 
 
@@ -37,7 +39,7 @@ public class ChessGameAggregate extends AbstractActor {
     private void initializeCommandHandler() {
         receive(ReceiveBuilder.
                 match(MoveCommand.class, moveCommand -> {
-                    log.info("received MoveCommand: " + moveCommand);
+                    log.info("received MoveCommand: {}", moveCommand);
                     // TimeUnit.SECONDS.sleep(3);
                     try {
                         final Integer result = this.performMove(moveCommand.move);
@@ -48,21 +50,31 @@ public class ChessGameAggregate extends AbstractActor {
                         sender().tell(failure, self());
                     }
 
-                }).
-                matchAny(o -> log.warning("Received unknown message!")).build()
+                })
+                .match(GetMoveCommand.class, getMoveCommand -> {
+                    final Optional<MoveValueObject> move = this.getMove(getMoveCommand.moveIndex);
+                    sender().tell(move, self());
+                })
+                .matchAny(o -> log.warning("Received unknown message!")).build()
         );
     }
 
 
     // Business
     //
-    public Integer performMove(MoveValueObject move) throws MoveException {
+
+    public Optional<MoveValueObject> getMove(int moveIndex) {
+        final ChessBoardEntity chessBoard = chessGameRepository.findChessBoard();
+        return chessBoard.getMove(moveIndex);
+    }
+
+    public int performMove(MoveValueObject move) throws MoveException {
 
         final ChessBoardEntity chessBoard = chessGameRepository.findChessBoard();
         final int countMoves = chessBoard.performMove(move);
 
         this.getContext().system().eventStream().publish(new MovedEvent(move));
-        return countMoves;
+        return countMoves-1;
     }
 
 }

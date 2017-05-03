@@ -5,6 +5,9 @@ import com.javacook.dddchess.domain.MoveValueObject;
 import com.javacook.dddchess.domain.PositionValueObject;
 import scala.concurrent.Future;
 
+import java.util.Optional;
+
+
 /**
  * Created by javacook on 21.04.17.
  */
@@ -12,7 +15,7 @@ public interface ChessGameApi {
 
     Future<Object> performMove(MoveValueObject move);
 
-    MoveValueObject getMove(int index);
+    Optional<MoveValueObject> getMove(int index);
 
     FigureValueObject figureAt(PositionValueObject position);
 

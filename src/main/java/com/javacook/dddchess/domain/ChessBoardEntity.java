@@ -27,6 +27,11 @@ public class ChessBoardEntity {
     ColorEnum lastMoveColor;
 
 
+    public Optional<MoveValueObject> getMove(int moveIndex) {
+        return Optional.ofNullable(
+        (moveIndex >= 0 && moveIndex < moves.size())?  moves.get(moveIndex) : null);
+    }
+
     public int performMove(MoveValueObject move) throws MoveException {
         final Optional<FigureValueObject> figureFrom = getFigureAtPosition(move.from);
         if (!figureFrom.isPresent()) {
@@ -125,6 +130,5 @@ public class ChessBoardEntity {
         }
         return boardAsStr;
     }
-
 
 }
