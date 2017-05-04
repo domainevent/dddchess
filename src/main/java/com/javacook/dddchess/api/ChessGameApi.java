@@ -17,6 +17,6 @@ public interface ChessGameApi {
 
     Optional<MoveValueObject> getMove(int index);
 
-    FigureValueObject figureAt(PositionValueObject position);
+    Optional<FigureValueObject> figureAt(PositionValueObject position);
 
 }

@@ -50,8 +50,8 @@ public class ChessGameApiImpl implements ChessGameApi {
 
 
     @Override
-    public FigureValueObject figureAt(PositionValueObject position) {
-        return new FigureValueObject(KING, BLACK);
+    public Optional<FigureValueObject> figureAt(PositionValueObject position) {
+        return Optional.of(new FigureValueObject(KING, BLACK));
     }
 
 }
