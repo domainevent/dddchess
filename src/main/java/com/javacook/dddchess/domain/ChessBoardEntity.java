@@ -72,6 +72,13 @@ public class ChessBoardEntity {
      * @param bottomColor Color of the figures at the bottom of the board starting with a1
      */
     public void initialize(ColorEnum bottomColor) {
+        moves = new ArrayList<>();
+        lastMoveColor = null;
+        for (VertCoord vertCoord : VertCoord.values()) {
+            for (HorCoord horCoord : HorCoord.values()) {
+                setFigure(horCoord, vertCoord, null);
+            }
+        }
         setFigure(A, _1, new FigureValueObject(ROCK, bottomColor));
         setFigure(B, _1, new FigureValueObject(KNIGHT, bottomColor));
         setFigure(C, _1, new FigureValueObject(BISHOP, bottomColor));
