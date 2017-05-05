@@ -29,10 +29,17 @@ public class ChessGameApiImpl implements ChessGameApi {
 
 
     @Override
-    public void newGame() {
+    public GameIdValueObject newGame() {
         ActorSelection chessGameActor = actorSystem.actorSelection("/user/chessGame");
         Timeout timeout = new Timeout(Duration.create(2, "seconds"));
-        Patterns.ask(chessGameActor, new NewGameCommand(), timeout);
+        Future<Object> future = Patterns.ask(chessGameActor, new NewGameCommand(), timeout);
+        try {
+            final Object result = Await.result(future, Duration.create(2, TimeUnit.SECONDS));
+            return (GameIdValueObject)result;
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -55,6 +62,14 @@ public class ChessGameApiImpl implements ChessGameApi {
         catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+
+    @Override
+    public Future<Object> getBoard() {
+        ActorSelection chessGameActor = actorSystem.actorSelection("/user/chessGame");
+        Timeout timeout = new Timeout(Duration.create(2, "seconds"));
+        return Patterns.ask(chessGameActor, new GetBoardCommand(), timeout);
     }
 
 

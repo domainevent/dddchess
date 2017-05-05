@@ -90,7 +90,7 @@ public class RestService {
      * @return the chess figure at the given coordinates
      */
     @GET
-    @Path("board")
+    @Path("board/figure")
     @Produces(MediaType.APPLICATION_JSON)
     @StatusCodes({
             @ResponseCode( code = 200, condition = "ok"),
@@ -113,6 +113,55 @@ public class RestService {
             throw new NotFoundException("There is no figure at " + position);
         }
     }
+
+
+
+    /**
+     * Returns the figure at the position (<code>horCoord</code>, <code>vertCord</code>)
+     * @return the chess figure at the given coordinates
+     */
+    @GET
+    @Path("board")
+    @Produces(MediaType.APPLICATION_JSON)
+    @StatusCodes({
+            @ResponseCode( code = 200, condition = "ok"),
+            @ResponseCode( code = 404, condition = "The field at the given coordinates is empty"),
+            @ResponseCode( code = 500, condition = "An exception occured")
+    })
+    public void getBoard(@Suspended final AsyncResponse resp) {
+        log.info("Get board");
+
+        // API-Call:
+        final Future<Object> future = chessGameApi.getBoard();
+
+        future.onComplete(new OnComplete<Object>() {
+
+            public void onComplete(Throwable failure, Object result) {
+                if (failure == null) {
+                    log.info("board: " + result);
+                    HashMap<String, Object> json = new HashMap<>();
+                    json.put("index", result);
+                    resp.resume(Response.ok().entity(result).build());
+                }
+                else {
+                    log.error(failure, failure.getMessage());
+                    HashMap<String, Object> json = new HashMap<>();
+                    if (failure instanceof AskTimeoutException) {
+                        json.put(ErrorCode.ERROR_CODE_KEY, ErrorCode.TIMEOUT);
+                        resp.resume(Response.status(503).entity(json).build());
+                    }
+                    else if (failure instanceof MoveException) {
+                        json.put(ErrorCode.ERROR_CODE_KEY, ErrorCode.INVALID_MOVE);
+                        json.put(ErrorCode.INVALID_MOVE.name(), failure.getMessage());
+                        resp.resume(Response.status(422).entity(json).build());
+                    }
+                    else {
+                        resp.resume(Response.serverError().entity(failure).build());
+                    }
+                }
+            }
+        }, actorSystem.dispatcher());
+    }// getBoard
 
 
     /**

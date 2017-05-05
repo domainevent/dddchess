@@ -51,8 +51,13 @@ public class ChessGameAggregate extends AbstractActor {
                     final Optional<MoveValueObject> move = this.getMove(getMoveCommand.moveIndex);
                     sender().tell(move, self());
                 })
+                .match(GetBoardCommand.class, getBoardCommand -> {
+                    final ChessBoardValueObject board = this.getBoard();
+                    sender().tell(board, self());
+                })
                 .match(NewGameCommand.class, newGameCommand -> {
-                    this.newGame();
+                    final GameIdValueObject gameId = this.newGame();
+                    sender().tell(gameId, self());
                 })
                 .matchAny(o -> log.warning("Received unknown message!")).build()
         );
@@ -79,14 +84,23 @@ public class ChessGameAggregate extends AbstractActor {
         // end transaction
     }
 
-    public void newGame() {
+    public GameIdValueObject newGame() {
         // begin transaction
         moveSequence.initialize();
         chessBoard.initialize();
         lastMoveColor = Optional.empty();
         // end transaction
+        return gameId;
     }
 
+    public ChessBoardValueObject getBoard() {
+        return new ChessBoardValueObject(chessBoard.board);
+    }
+
+
+    public Optional<FigureValueObject> getFigureAtPosition(PositionValueObject position) {
+        return chessBoard.getFigureAtPosition(position);
+    }
 
 
     public static Props mkProps() {
@@ -97,7 +111,5 @@ public class ChessGameAggregate extends AbstractActor {
     public void preStart() {
         log.debug("Starting Chess Game");
     }
-
-
 
 }

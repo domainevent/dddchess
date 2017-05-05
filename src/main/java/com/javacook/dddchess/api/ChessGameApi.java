@@ -1,10 +1,7 @@
 package com.javacook.dddchess.api;
 
-import com.javacook.dddchess.domain.ChessBoardEntity;
-import com.javacook.dddchess.domain.FigureValueObject;
+import com.javacook.dddchess.domain.*;
 import com.javacook.dddchess.domain.FigureValueObject.ColorEnum;
-import com.javacook.dddchess.domain.MoveValueObject;
-import com.javacook.dddchess.domain.PositionValueObject;
 import scala.concurrent.Future;
 
 import java.util.Optional;
@@ -15,11 +12,13 @@ import java.util.Optional;
  */
 public interface ChessGameApi {
 
-    void newGame();
+    GameIdValueObject newGame();
 
     Future<Object> performMove(MoveValueObject move);
 
     Optional<MoveValueObject> getMove(int index);
+
+    Future<Object> getBoard();
 
     Optional<FigureValueObject> figureAt(PositionValueObject position);
 
