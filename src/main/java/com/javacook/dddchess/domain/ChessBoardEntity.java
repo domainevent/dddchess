@@ -66,53 +66,36 @@ public class ChessBoardEntity {
 
 
     /**
-     *
-     * @param bottomColor Color of the figures at the bottom of the board starting with a1
      */
-    public void initialize(ColorEnum bottomColor) {
+    public void initialize() {
         for (VertCoord vertCoord : VertCoord.values()) {
             for (HorCoord horCoord : HorCoord.values()) {
                 setFigure(horCoord, vertCoord, null);
             }
         }
-        setFigure(A, _1, new FigureValueObject(ROCK, bottomColor));
-        setFigure(B, _1, new FigureValueObject(KNIGHT, bottomColor));
-        setFigure(C, _1, new FigureValueObject(BISHOP, bottomColor));
-        if (bottomColor == WHITE) {
-            setFigure(D, _1, new FigureValueObject(QUEEN, bottomColor));
-            setFigure(E, _1, new FigureValueObject(KING, bottomColor));
-        }
-        else {
-            setFigure(E, _1, new FigureValueObject(KING, bottomColor));
-            setFigure(D, _1, new FigureValueObject(QUEEN, bottomColor));
-        }
-        setFigure(F, _1, new FigureValueObject(BISHOP, bottomColor));
-        setFigure(G, _1, new FigureValueObject(KNIGHT, bottomColor));
-        setFigure(H, _1, new FigureValueObject(ROCK, bottomColor));
+        setFigure(A, _1, new FigureValueObject(ROCK, WHITE));
+        setFigure(B, _1, new FigureValueObject(KNIGHT, WHITE));
+        setFigure(C, _1, new FigureValueObject(BISHOP, WHITE));
+        setFigure(D, _1, new FigureValueObject(QUEEN, WHITE));
+        setFigure(E, _1, new FigureValueObject(KING, WHITE));
+        setFigure(F, _1, new FigureValueObject(BISHOP, WHITE));
+        setFigure(G, _1, new FigureValueObject(KNIGHT, WHITE));
+        setFigure(H, _1, new FigureValueObject(ROCK, WHITE));
 
         for (HorCoord coord : HorCoord.values()) {
-            setFigure(coord, _2, new FigureValueObject(PAWN, bottomColor));
+            setFigure(coord, _2, new FigureValueObject(PAWN, WHITE));
         }
-
-        ColorEnum topColor = (bottomColor == WHITE)? BLACK : WHITE;
-
-        setFigure(A, _8, new FigureValueObject(ROCK, topColor));
-        setFigure(B, _8, new FigureValueObject(KNIGHT, topColor));
-        setFigure(C, _8, new FigureValueObject(BISHOP, topColor));
-        if (topColor == BLACK) {
-            setFigure(D, _8, new FigureValueObject(QUEEN, topColor));
-            setFigure(E, _8, new FigureValueObject(KING, topColor));
-        }
-        else {
-            setFigure(E, _8, new FigureValueObject(KING, topColor));
-            setFigure(D, _8, new FigureValueObject(QUEEN, topColor));
-        }
-        setFigure(F, _8, new FigureValueObject(BISHOP, topColor));
-        setFigure(G, _8, new FigureValueObject(KNIGHT, topColor));
-        setFigure(H, _8, new FigureValueObject(ROCK, topColor));
+        setFigure(A, _8, new FigureValueObject(ROCK, BLACK));
+        setFigure(B, _8, new FigureValueObject(KNIGHT, BLACK));
+        setFigure(C, _8, new FigureValueObject(BISHOP, BLACK));
+        setFigure(D, _8, new FigureValueObject(QUEEN, BLACK));
+        setFigure(E, _8, new FigureValueObject(KING, BLACK));
+        setFigure(F, _8, new FigureValueObject(BISHOP, BLACK));
+        setFigure(G, _8, new FigureValueObject(KNIGHT, BLACK));
+        setFigure(H, _8, new FigureValueObject(ROCK, BLACK));
 
         for (HorCoord coord : HorCoord.values()) {
-            setFigure(coord, _7, new FigureValueObject(PAWN, topColor));
+            setFigure(coord, _7, new FigureValueObject(PAWN, BLACK));
         }
     }
 

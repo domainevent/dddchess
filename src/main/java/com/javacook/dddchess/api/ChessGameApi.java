@@ -1,5 +1,6 @@
 package com.javacook.dddchess.api;
 
+import com.javacook.dddchess.domain.ChessBoardEntity;
 import com.javacook.dddchess.domain.FigureValueObject;
 import com.javacook.dddchess.domain.FigureValueObject.ColorEnum;
 import com.javacook.dddchess.domain.MoveValueObject;
@@ -14,7 +15,7 @@ import java.util.Optional;
  */
 public interface ChessGameApi {
 
-    void newGame(ColorEnum playerColor);
+    void newGame();
 
     Future<Object> performMove(MoveValueObject move);
 

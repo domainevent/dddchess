@@ -29,7 +29,7 @@ public class ChessGameAggregate extends AbstractActor {
      */
     public ChessGameAggregate() {
         initializeCommandHandler();
-        newGame(WHITE);
+        newGame();
     }
 
     private void initializeCommandHandler() {
@@ -52,7 +52,7 @@ public class ChessGameAggregate extends AbstractActor {
                     sender().tell(move, self());
                 })
                 .match(NewGameCommand.class, newGameCommand -> {
-                    this.newGame(newGameCommand.color);
+                    this.newGame();
                 })
                 .matchAny(o -> log.warning("Received unknown message!")).build()
         );
@@ -79,10 +79,10 @@ public class ChessGameAggregate extends AbstractActor {
         // end transaction
     }
 
-    public void newGame(ColorEnum color) {
+    public void newGame() {
         // begin transaction
         moveSequence.initialize();
-        chessBoard.initialize(color);
+        chessBoard.initialize();
         lastMoveColor = Optional.empty();
         // end transaction
     }

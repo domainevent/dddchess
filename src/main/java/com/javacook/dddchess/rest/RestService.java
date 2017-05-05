@@ -78,7 +78,7 @@ public class RestService {
     @Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
     public Response newGame(@FormParam("color") ColorEnum color) {
         log.info("New game, player color {}", color);
-        chessGameApi.newGame(color == null? WHITE: color);
+        chessGameApi.newGame();
         return Response.ok().build();
     }
 

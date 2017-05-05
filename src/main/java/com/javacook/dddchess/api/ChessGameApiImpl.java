@@ -29,10 +29,10 @@ public class ChessGameApiImpl implements ChessGameApi {
 
 
     @Override
-    public void newGame(FigureValueObject.ColorEnum playerColor) {
+    public void newGame() {
         ActorSelection chessGameActor = actorSystem.actorSelection("/user/chessGame");
         Timeout timeout = new Timeout(Duration.create(2, "seconds"));
-        Patterns.ask(chessGameActor, new NewGameCommand(playerColor), timeout);
+        Patterns.ask(chessGameActor, new NewGameCommand(), timeout);
     }
 
     @Override
