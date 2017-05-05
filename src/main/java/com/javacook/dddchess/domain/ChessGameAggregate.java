@@ -15,24 +15,13 @@ import static com.javacook.dddchess.domain.FigureValueObject.ColorEnum.WHITE;
 
 public class ChessGameAggregate extends AbstractActor {
 
+    LoggingAdapter log = Logging.getLogger(getContext().system(), this);
+
     GameIdValueObject gameId = new GameIdValueObject();
 
     MoveSequenceEntity moveSequence = new MoveSequenceEntity(gameId);
     ChessBoardEntity chessBoard = new ChessBoardEntity(gameId);
     Optional<ColorEnum> lastMoveColor;
-
-    LoggingAdapter log = Logging.getLogger(getContext().system(), this);
-
-    public static Props mkProps() {
-        return Props.create(ChessGameAggregate.class);
-    }
-
-    @Override
-    public void preStart() {
-        log.debug("Starting Chess Game");
-    }
-
-    final ChessGameRepository chessGameRepository = new ChessGameRepository();
 
 
     /**
@@ -70,6 +59,7 @@ public class ChessGameAggregate extends AbstractActor {
     }
 
 
+
     // Business
     //
 
@@ -96,5 +86,18 @@ public class ChessGameAggregate extends AbstractActor {
         lastMoveColor = Optional.empty();
         // end transaction
     }
+
+
+
+    public static Props mkProps() {
+        return Props.create(ChessGameAggregate.class);
+    }
+
+    @Override
+    public void preStart() {
+        log.debug("Starting Chess Game");
+    }
+
+
 
 }
