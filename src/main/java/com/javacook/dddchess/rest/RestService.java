@@ -139,8 +139,6 @@ public class RestService {
             public void onComplete(Throwable failure, Object result) {
                 if (failure == null) {
                     log.info("board: " + result);
-                    HashMap<String, Object> json = new HashMap<>();
-                    json.put("index", result);
                     resp.resume(Response.ok().entity(result).build());
                 }
                 else {
@@ -149,11 +147,6 @@ public class RestService {
                     if (failure instanceof AskTimeoutException) {
                         json.put(ErrorCode.ERROR_CODE_KEY, ErrorCode.TIMEOUT);
                         resp.resume(Response.status(503).entity(json).build());
-                    }
-                    else if (failure instanceof MoveException) {
-                        json.put(ErrorCode.ERROR_CODE_KEY, ErrorCode.INVALID_MOVE);
-                        json.put(ErrorCode.INVALID_MOVE.name(), failure.getMessage());
-                        resp.resume(Response.status(422).entity(json).build());
                     }
                     else {
                         resp.resume(Response.serverError().entity(failure).build());
