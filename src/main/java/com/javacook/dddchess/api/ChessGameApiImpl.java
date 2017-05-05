@@ -27,7 +27,7 @@ public class ChessGameApiImpl implements ChessGameApi {
         this.actorSystem = actorSystem;
     }
 
-w
+
     @Override
     public void newGame(FigureValueObject.ColorEnum playerColor) {
         ActorSelection chessGameActor = actorSystem.actorSelection("/user/chessGame");
@@ -35,7 +35,7 @@ w
         Patterns.ask(chessGameActor, new NewGameCommand(playerColor), timeout);
     }
 
-
+    @Override
     public Future<Object> performMove(MoveValueObject move) {
         ActorSelection chessGameActor = actorSystem.actorSelection("/user/chessGame");
         Timeout timeout = new Timeout(Duration.create(2, "seconds"));

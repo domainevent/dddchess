@@ -15,6 +15,12 @@ import static com.javacook.dddchess.domain.FigureValueObject.ColorEnum.WHITE;
 
 public class ChessGameAggregate extends AbstractActor {
 
+    GameIdValueObject gameId = new GameIdValueObject();
+
+    MoveSequenceEntity moveSequence = new MoveSequenceEntity(gameId);
+    ChessBoardEntity chessBoard = new ChessBoardEntity(gameId);
+    Optional<ColorEnum> lastMoveColor;
+
     LoggingAdapter log = Logging.getLogger(getContext().system(), this);
 
     public static Props mkProps() {
@@ -68,21 +74,27 @@ public class ChessGameAggregate extends AbstractActor {
     //
 
     public Optional<MoveValueObject> getMove(int moveIndex) {
-        final ChessBoardEntity chessBoard = chessGameRepository.findChessBoard();
-        return chessBoard.getMove(moveIndex);
+        return moveSequence.getMove(moveIndex);
     }
 
     public int performMove(MoveValueObject move) throws MoveException {
-
-        final ChessBoardEntity chessBoard = chessGameRepository.findChessBoard();
-        final int countMoves = chessBoard.performMove(move);
+        // begin transaction
+        moveSequence.addMove(move);
+        chessBoard.performMove(move, lastMoveColor);
+        lastMoveColor = (lastMoveColor.isPresent())?
+                Optional.of(lastMoveColor.get().swap()) : Optional.of(ColorEnum.WHITE);
 
         this.getContext().system().eventStream().publish(new MovedEvent(move));
-        return countMoves-1;
+        return moveSequence.noMoves()-1;
+        // end transaction
     }
 
     public void newGame(ColorEnum color) {
-        chessGameRepository.findChessBoard().initialize(color);
+        // begin transaction
+        moveSequence.initialize();
+        chessBoard.initialize(color);
+        lastMoveColor = Optional.empty();
+        // end transaction
     }
 
 }

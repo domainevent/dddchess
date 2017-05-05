@@ -22,32 +22,30 @@ public class ChessBoardEntity {
     public final static int HOR_SIZE = HorCoord.values().length;
     public final static int VERT_SIZE = VertCoord.values().length;
 
-    List<MoveValueObject> moves = new ArrayList<>();
-    FigureValueObject[][] board = new FigureValueObject[HOR_SIZE][VERT_SIZE];
-    ColorEnum lastMoveColor;
+    public final GameIdValueObject id;
 
+    protected final FigureValueObject[][] board;
 
-    public Optional<MoveValueObject> getMove(int moveIndex) {
-        return Optional.ofNullable(
-        (moveIndex >= 0 && moveIndex < moves.size())?  moves.get(moveIndex) : null);
+    public ChessBoardEntity(GameIdValueObject id) {
+        this.id = id;
+        board = new FigureValueObject[HOR_SIZE][VERT_SIZE];
     }
 
-    public int performMove(MoveValueObject move) throws MoveException {
+
+    public int performMove(final MoveValueObject move, final Optional<ColorEnum> lastMoveColor) throws MoveException {
         final Optional<FigureValueObject> figureFrom = getFigureAtPosition(move.from);
         if (!figureFrom.isPresent()) {
             throw new MoveException("No figure on " + move.from + " present");
         }
-        else if (figureFrom.get().color == lastMoveColor) {
+        else if (lastMoveColor.isPresent() && figureFrom.get().color == lastMoveColor.get()) {
             throw new MoveException("Invalid player: " + lastMoveColor);
         }
         // end validation
         setFigure(move.from, null);
         setFigure(move.to, figureFrom.get());
-        lastMoveColor = figureFrom.get().color;
-        moves.add(move);
         System.out.println("Color " + lastMoveColor);
         System.out.println(printBoard());
-        return moves.size();
+        return 0;
     }
 
     Optional<FigureValueObject> getFigureAtPosition(PositionValueObject position) {
@@ -72,8 +70,6 @@ public class ChessBoardEntity {
      * @param bottomColor Color of the figures at the bottom of the board starting with a1
      */
     public void initialize(ColorEnum bottomColor) {
-        moves = new ArrayList<>();
-        lastMoveColor = null;
         for (VertCoord vertCoord : VertCoord.values()) {
             for (HorCoord horCoord : HorCoord.values()) {
                 setFigure(horCoord, vertCoord, null);
