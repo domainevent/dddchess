@@ -7,6 +7,7 @@ import akka.event.LoggingAdapter;
 import akka.pattern.AskTimeoutException;
 import com.javacook.dddchess.api.ChessGameApi;
 import com.javacook.dddchess.domain.FigureValueObject;
+import com.javacook.dddchess.domain.FigureValueObject.ColorEnum;
 import com.javacook.dddchess.domain.MoveException;
 import com.javacook.dddchess.domain.MoveValueObject;
 import com.javacook.dddchess.domain.PositionValueObject;
@@ -29,6 +30,10 @@ import java.util.HashMap;
 import java.util.Optional;
 
 
+/**
+ * This Service provides a set of functions all around chess game. Moves of figures
+ * can be performed as well as queries of figures on the board or previous moves.
+ */
 @Path("/chessgame")
 public class RestService {
 
@@ -64,6 +69,19 @@ public class RestService {
 
 
     /**
+     * @param color the
+     */
+    @GET
+    @Path("game/new")
+    @Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
+    public Response newGame(@QueryParam("color") ColorEnum color) {
+        log.info("New game, player color {}", color);
+        chessGameApi.newGame(color);
+        return Response.ok().build();
+    }
+
+
+    /**
      * Returns the figure at the position (<code>horCoord</code>, <code>vertCord</code>)
      * @param horCoord the horizontal coordinate of field on the chess board
      * @param vertCoord the vertical coordinate of field on the chess board
@@ -95,6 +113,11 @@ public class RestService {
     }
 
 
+    /**
+     * Returns the nth move of the chess game given by the parameter <code>index</code>
+     * @param index the
+     * @return
+     */
     @GET
     @Path("move/{index}")
     @Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
@@ -110,28 +133,40 @@ public class RestService {
     }
 
 
+    /**
+     * Delegates to the same service accepting a JSON object. Here, the move is
+     * given by a String representation like "b1-c3" and
+     * @param move
+     * @param resp
+     */
     @POST
     @Path("move")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     @ManagedAsync
-    public void postMove(@FormParam("move") String move,
-                         @Suspended final AsyncResponse resp) {
+    public void performMove(@FormParam("move") String move,
+                            @Suspended final AsyncResponse resp) {
 
         if (move == null) {
             throw new BadRequestException("Missing form parameter 'move'");
         }
-        postMove(new MoveValueObject(move), resp);
+        performMove(new MoveValueObject(move), resp);
     }
 
 
+    /**
+     * Moves a figure according to the values in <code>move</code> - which consists of
+     * a "from"- and "to"-part of chess board coordinates.
+     * @param move
+     * @param resp
+     */
     @POST
     @Path("move")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @ManagedAsync
-    public void postMove(MoveValueObject move,
-                         @Suspended final AsyncResponse resp) {
+    public void performMove(MoveValueObject move,
+                            @Suspended final AsyncResponse resp) {
 
         log.info("Try to perform the performMove {}", move);
 
@@ -167,6 +202,6 @@ public class RestService {
                 }
             }
         }, actorSystem.dispatcher());
-    }// postMove
+    }// performMove
 
 }

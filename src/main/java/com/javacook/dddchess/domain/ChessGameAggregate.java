@@ -6,6 +6,7 @@ import akka.actor.Status;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import akka.japi.pf.ReceiveBuilder;
+import com.javacook.dddchess.domain.FigureValueObject.ColorEnum;
 
 import java.util.Optional;
 
@@ -33,7 +34,7 @@ public class ChessGameAggregate extends AbstractActor {
      */
     public ChessGameAggregate() {
         initializeCommandHandler();
-        chessGameRepository.findChessBoard().initialize(WHITE); // FIXME javacook
+        newGame(WHITE);
     }
 
     private void initializeCommandHandler() {
@@ -55,6 +56,9 @@ public class ChessGameAggregate extends AbstractActor {
                     final Optional<MoveValueObject> move = this.getMove(getMoveCommand.moveIndex);
                     sender().tell(move, self());
                 })
+                .match(NewGameCommand.class, newGameCommand -> {
+                    this.newGame(newGameCommand.color);
+                })
                 .matchAny(o -> log.warning("Received unknown message!")).build()
         );
     }
@@ -75,6 +79,10 @@ public class ChessGameAggregate extends AbstractActor {
 
         this.getContext().system().eventStream().publish(new MovedEvent(move));
         return countMoves-1;
+    }
+
+    public void newGame(ColorEnum color) {
+        chessGameRepository.findChessBoard().initialize(color);
     }
 
 }
