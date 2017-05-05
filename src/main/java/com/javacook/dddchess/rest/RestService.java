@@ -29,12 +29,14 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Optional;
 
+import static com.javacook.dddchess.domain.FigureValueObject.ColorEnum.WHITE;
+
 
 /**
  * This Service provides a set of functions all around chess game. Moves of figures
  * can be performed as well as queries of figures on the board or previous moves.
  */
-@Path("/chessgame")
+@Path("/chessgames")
 public class RestService {
 
     @Context
@@ -71,12 +73,12 @@ public class RestService {
     /**
      * @param color the
      */
-    @GET
-    @Path("game/new")
+    @POST
+    @Path("games")
     @Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
-    public Response newGame(@QueryParam("color") ColorEnum color) {
+    public Response newGame(@FormParam("color") ColorEnum color) {
         log.info("New game, player color {}", color);
-        chessGameApi.newGame(color);
+        chessGameApi.newGame(color == null? WHITE: color);
         return Response.ok().build();
     }
 
@@ -119,7 +121,7 @@ public class RestService {
      * @return
      */
     @GET
-    @Path("move/{index}")
+    @Path("moves/{index}")
     @Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
     public MoveValueObject getMove(@NotNull @PathParam("index") int index) {
         log.info("Get the {}. move", index);
@@ -140,7 +142,7 @@ public class RestService {
      * @param resp
      */
     @POST
-    @Path("move")
+    @Path("moves")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     @ManagedAsync
@@ -161,7 +163,7 @@ public class RestService {
      * @param resp
      */
     @POST
-    @Path("move")
+    @Path("moves")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @ManagedAsync
