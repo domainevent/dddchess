@@ -4,8 +4,7 @@ import com.javacook.dddchess.domain.FigureValueObject.ColorEnum;
 import com.javacook.dddchess.domain.PositionValueObject.HorCoord;
 import com.javacook.dddchess.domain.PositionValueObject.VertCoord;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 import java.util.Optional;
 
 import static com.javacook.dddchess.domain.FigureValueObject.ColorEnum.*;
@@ -44,7 +43,7 @@ public class ChessBoardEntity {
         setFigure(move.from, null);
         setFigure(move.to, figureFrom.get());
         System.out.println("Color " + lastMoveColor);
-        System.out.println(printBoard());
+        System.out.println(toString());
         return 0;
     }
 
@@ -73,40 +72,50 @@ public class ChessBoardEntity {
                 setFigure(horCoord, vertCoord, null);
             }
         }
-        setFigure(A, _1, new FigureValueObject(ROCK, WHITE));
+        setFigure(A, _1, new FigureValueObject(ROOK, WHITE));
         setFigure(B, _1, new FigureValueObject(KNIGHT, WHITE));
         setFigure(C, _1, new FigureValueObject(BISHOP, WHITE));
         setFigure(D, _1, new FigureValueObject(QUEEN, WHITE));
         setFigure(E, _1, new FigureValueObject(KING, WHITE));
         setFigure(F, _1, new FigureValueObject(BISHOP, WHITE));
         setFigure(G, _1, new FigureValueObject(KNIGHT, WHITE));
-        setFigure(H, _1, new FigureValueObject(ROCK, WHITE));
+        setFigure(H, _1, new FigureValueObject(ROOK, WHITE));
 
         for (HorCoord coord : HorCoord.values()) {
             setFigure(coord, _2, new FigureValueObject(PAWN, WHITE));
         }
-        setFigure(A, _8, new FigureValueObject(ROCK, BLACK));
+        setFigure(A, _8, new FigureValueObject(ROOK, BLACK));
         setFigure(B, _8, new FigureValueObject(KNIGHT, BLACK));
         setFigure(C, _8, new FigureValueObject(BISHOP, BLACK));
         setFigure(D, _8, new FigureValueObject(QUEEN, BLACK));
         setFigure(E, _8, new FigureValueObject(KING, BLACK));
         setFigure(F, _8, new FigureValueObject(BISHOP, BLACK));
         setFigure(G, _8, new FigureValueObject(KNIGHT, BLACK));
-        setFigure(H, _8, new FigureValueObject(ROCK, BLACK));
+        setFigure(H, _8, new FigureValueObject(ROOK, BLACK));
 
         for (HorCoord coord : HorCoord.values()) {
             setFigure(coord, _7, new FigureValueObject(PAWN, BLACK));
         }
     }
 
-    public String printBoard() {
+
+    @Override
+    public String toString() {
+        return "ChessBoardEntity{" +
+                "id=" + id +
+                ", board=" + System.lineSeparator() + boardToString(board) +
+                '}';
+    }
+
+
+    public static String boardToString(FigureValueObject[][] board) {
         final String horLine = "-------------------------";
         String boardAsStr = horLine + System.lineSeparator();
         for(VertCoord vertCoord : VertCoord.valuesInverted()) {
             boardAsStr += "|";
             for(HorCoord horCoord : HorCoord.values()) {
-                final Optional<FigureValueObject> figure = getFigureAtPosition(horCoord, vertCoord);
-                boardAsStr += figure.isPresent()? figure.get().abbreviation() : "  ";
+                final FigureValueObject figure = board[horCoord.ordinal()][vertCoord.ordinal()];
+                boardAsStr += figure == null? "  " : figure.abbreviation();
                 boardAsStr += "|";
             }
             boardAsStr += System.lineSeparator() + horLine;
