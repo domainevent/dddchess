@@ -21,6 +21,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.container.AsyncResponse;
 import javax.ws.rs.container.Suspended;
 import javax.ws.rs.core.*;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import java.net.URI;
 import java.util.Date;
 import java.util.HashMap;
@@ -125,7 +126,7 @@ public class RestService {
             @ResponseCode( code = 404, condition = "The field at the given coordinates is empty"),
             @ResponseCode( code = 500, condition = "An exception occured")
     })
-    public void getBoard(@Suspended final AsyncResponse resp) {
+    public void getBoard(@Suspended final AsyncResponse resp, @Context Request request) {
         log.info("Get board");
 
         // API-Call:
@@ -137,7 +138,19 @@ public class RestService {
                 if (failure == null) {
                     ChessBoardValueObject chessBoard = (ChessBoardValueObject)result;
                     log.info("board: " + System.lineSeparator() + chessBoard);
-                    resp.resume(Response.ok().entity(chessBoard).build());
+
+                    CacheControl cc = new CacheControl();
+                    cc.setMaxAge(-1);
+                    EntityTag etag = new EntityTag(""+ chessBoard.hashCode());
+//                    EntityTag etag = new EntityTag("123456789");
+                    ResponseBuilder builder = request.evaluatePreconditions(etag);
+
+                    if (builder == null) {
+                        builder = Response.ok(chessBoard);
+                        builder.tag(etag);
+                    }
+                    builder.cacheControl(cc);
+                    resp.resume(builder.build());
                 }
                 else {
                     log.error(failure, failure.getMessage());
