@@ -4,7 +4,7 @@ import javax.xml.bind.annotation.XmlType;
 
 
 @XmlType
-public class MoveValueObject {
+public class MoveValueObject extends ValueObject {
 
     public final PositionValueObject from;
     public final PositionValueObject to;
@@ -12,6 +12,7 @@ public class MoveValueObject {
 
     public MoveValueObject() {
         this((PositionValueObject)null, (PositionValueObject)null);
+        throw new IllegalStateException("This constructor should not be called here.");
     }
 
 
