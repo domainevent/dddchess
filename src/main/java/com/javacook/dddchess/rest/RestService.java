@@ -34,7 +34,7 @@ import static com.javacook.dddchess.domain.FigureValueObject.ColorEnum.WHITE;
  * This Service provides a set of functions all around chess game. Moves of figures
  * can be performed as well as queries of figures on the board or previous moves.
  */
-@Path("/chessgames")
+@Path("/")
 public class RestService {
 
     @Context
@@ -62,7 +62,7 @@ public class RestService {
     @GET
     @Path("isalive")
     @Produces(MediaType.TEXT_PLAIN)
-    public String figureAt() {
+    public String isAlive() {
         log.info("dddchess is alive");
         return "DDD-Chess is alive: " + new Date();
     }
@@ -74,10 +74,9 @@ public class RestService {
     @POST
     @Path("games")
     @Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
-    public Response newGame(@FormParam("color") ColorEnum color) {
+    public GameIdValueObject newGame(@FormParam("color") ColorEnum color) {
         log.info("New game, player color {}", color);
-        chessGameApi.newGame();
-        return Response.ok().build();
+        return chessGameApi.newGame();
     }
 
 
@@ -88,7 +87,7 @@ public class RestService {
      * @return the chess figure at the given coordinates
      */
     @GET
-    @Path("board/figure")
+    @Path("games/{gameId}/board/figure")
     @Produces(MediaType.APPLICATION_JSON)
     @StatusCodes({
             @ResponseCode( code = 200, condition = "ok"),
@@ -96,13 +95,14 @@ public class RestService {
             @ResponseCode( code = 500, condition = "An exception occured")
     })
     public FigureValueObject figureAt(
-            @NotNull @QueryParam("horCoord") HorCoord horCoord,
-            @NotNull @QueryParam("vertCoord") VertCoord vertCoord) {
+            final @NotNull @PathParam("gameId") String gameId,
+            final @NotNull @QueryParam("horCoord") HorCoord horCoord,
+            final @NotNull @QueryParam("vertCoord") VertCoord vertCoord) {
 
         log.info("Get figure at horCoord={}, vertCoord={}", horCoord, vertCoord);
 
         final PositionValueObject position = new PositionValueObject(horCoord, vertCoord);
-        final Optional<FigureValueObject> figure = chessGameApi.figureAt(position);
+        final Optional<FigureValueObject> figure = chessGameApi.figureAt(null, position);
 
         if (figure.isPresent()) {
             return figure.get();
@@ -119,36 +119,41 @@ public class RestService {
      * @return the chess figure at the given coordinates
      */
     @GET
-    @Path("board")
+    @Path("games/{gameId}/board")
     @Produces(MediaType.APPLICATION_JSON)
     @StatusCodes({
             @ResponseCode( code = 200, condition = "ok"),
             @ResponseCode( code = 404, condition = "The field at the given coordinates is empty"),
             @ResponseCode( code = 500, condition = "An exception occured")
     })
-    public void getBoard(@Suspended final AsyncResponse resp, @Context Request request) {
+    public void getBoard(
+            final @NotNull @PathParam("gameId") String gameId,
+            final @Suspended AsyncResponse resp,
+            final @Context Request request) {
+
         log.info("Get board");
 
         // API-Call:
-        final Future<Object> future = chessGameApi.getBoard();
+        final Future<Object> future = chessGameApi.getBoard(null);
 
         future.onComplete(new OnComplete<Object>() {
 
             public void onComplete(Throwable failure, Object result) {
                 if (failure == null) {
                     ChessBoardValueObject chessBoard = (ChessBoardValueObject)result;
-                    log.info("board: " + System.lineSeparator() + chessBoard);
+                    // log.debug("board: " + System.lineSeparator() + chessBoard);
 
                     CacheControl cc = new CacheControl();
                     cc.setMaxAge(-1);
                     EntityTag etag = new EntityTag(""+ chessBoard.hashCode());
-//                    EntityTag etag = new EntityTag("123456789");
                     ResponseBuilder builder = request.evaluatePreconditions(etag);
 
                     if (builder == null) {
+                        // nothing cached found, so transfer board again
                         builder = Response.ok(chessBoard);
                         builder.tag(etag);
                     }
+                    // elsewhere a status vode 304 (NOT MODIFIED) ist produced
                     builder.cacheControl(cc);
                     resp.resume(builder.build());
                 }
@@ -174,11 +179,14 @@ public class RestService {
      * @return
      */
     @GET
-    @Path("moves/{index}")
+    @Path("games/{gameId}/moves/{index}")
     @Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
-    public MoveValueObject getMove(@NotNull @PathParam("index") int index) {
+    public MoveValueObject getMove(
+            final @NotNull @PathParam("gameId") String gameId,
+            final @NotNull @PathParam("index") int index) {
+
         log.info("Get the {}. move", index);
-        final Optional<MoveValueObject> move = chessGameApi.getMove(index);
+        final Optional<MoveValueObject> move = chessGameApi.getMove(null, index);
         if (move.isPresent()) {
             return move.get();
         }
@@ -195,17 +203,19 @@ public class RestService {
      * @param resp
      */
     @POST
-    @Path("moves")
+    @Path("games/{gameId}/moves")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     @ManagedAsync
-    public void performMove(@FormParam("move") String move,
-                            @Suspended final AsyncResponse resp) {
+    public void performMove(
+            final @NotNull @PathParam("gameId") String gameId,
+            final @FormParam("move") String move,
+            final @Suspended AsyncResponse resp) {
 
         if (move == null) {
             throw new BadRequestException("Missing form parameter 'move'");
         }
-        performMove(new MoveValueObject(move), resp);
+        performMove(gameId, new MoveValueObject(move), resp);
     }
 
 
@@ -216,17 +226,19 @@ public class RestService {
      * @param resp
      */
     @POST
-    @Path("moves")
+    @Path("games/{gameId}/moves")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @ManagedAsync
-    public void performMove(MoveValueObject move,
-                            @Suspended final AsyncResponse resp) {
+    public void performMove(
+            final @NotNull @PathParam("gameId") String gameId,
+            final @NotNull MoveValueObject move,
+            final @Suspended AsyncResponse resp) {
 
         log.info("Try to perform the performMove {}", move);
 
         // API-Call:
-        final Future<Object> future = chessGameApi.performMove(move);
+        final Future<Object> future = chessGameApi.performMove(null, move);
 
         future.onComplete(new OnComplete<Object>() {
 
@@ -240,7 +252,7 @@ public class RestService {
                     resp.resume(Response.created(location).entity(json).build());
                 }
                 else {
-                    log.error(failure, failure.getMessage());
+                    log.error(failure.toString());
                     HashMap<String, Object> json = new HashMap<>();
                     if (failure instanceof AskTimeoutException) {
                         json.put(ErrorCode.ERROR_CODE_KEY, ErrorCode.TIMEOUT);

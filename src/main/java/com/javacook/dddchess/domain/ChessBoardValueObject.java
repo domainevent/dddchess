@@ -16,7 +16,6 @@ public class ChessBoardValueObject extends ValueObject {
 
     public ChessBoardValueObject() {
         this(null);
-        throw new IllegalStateException("This constructor should not be called here.");
     }
 
     @Override

@@ -52,7 +52,6 @@ public class FigureValueObject extends ValueObject {
 
     public FigureValueObject() {
         this(null, null);
-        throw new IllegalStateException("This constructor should not be called here.");
     }
 
 

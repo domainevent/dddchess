@@ -43,7 +43,7 @@ public class ChessGameApiImpl implements ChessGameApi {
     }
 
     @Override
-    public Future<Object> performMove(MoveValueObject move) {
+    public Future<Object> performMove(GameIdValueObject gameId, MoveValueObject move) {
         ActorSelection chessGameActor = actorSystem.actorSelection("/user/chessGame");
         Timeout timeout = new Timeout(Duration.create(2, "seconds"));
         return Patterns.ask(chessGameActor, new MoveCommand(move), timeout);
@@ -51,7 +51,7 @@ public class ChessGameApiImpl implements ChessGameApi {
 
 
     @Override
-    public Optional<MoveValueObject> getMove(int index) {
+    public Optional<MoveValueObject> getMove(GameIdValueObject gameId, int index) {
         ActorSelection chessGameActor = actorSystem.actorSelection("/user/chessGame");
         Timeout timeout = new Timeout(Duration.create(2, "seconds"));
         Future<Object> future = Patterns.ask(chessGameActor, new GetMoveCommand(index), timeout);
@@ -66,7 +66,7 @@ public class ChessGameApiImpl implements ChessGameApi {
 
 
     @Override
-    public Future<Object> getBoard() {
+    public Future<Object> getBoard(GameIdValueObject gameId) {
         ActorSelection chessGameActor = actorSystem.actorSelection("/user/chessGame");
         Timeout timeout = new Timeout(Duration.create(2, "seconds"));
         return Patterns.ask(chessGameActor, new GetBoardCommand(), timeout);
@@ -74,7 +74,7 @@ public class ChessGameApiImpl implements ChessGameApi {
 
 
     @Override
-    public Optional<FigureValueObject> figureAt(PositionValueObject position) {
+    public Optional<FigureValueObject> figureAt(GameIdValueObject gameId, PositionValueObject position) {
         return Optional.of(new FigureValueObject(KING, BLACK));
     }
 

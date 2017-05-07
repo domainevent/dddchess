@@ -45,7 +45,6 @@ public class PositionValueObject extends ValueObject {
 
     public PositionValueObject() {
         this(null, null);
-        throw new IllegalStateException("This constructor should not be called here.");
     }
 
 

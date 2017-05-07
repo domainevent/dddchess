@@ -14,12 +14,12 @@ public interface ChessGameApi {
 
     GameIdValueObject newGame();
 
-    Future<Object> performMove(MoveValueObject move);
+    Future<Object> performMove(GameIdValueObject gameId, MoveValueObject move);
 
-    Optional<MoveValueObject> getMove(int index);
+    Optional<MoveValueObject> getMove(GameIdValueObject gameId, int index);
 
-    Future<Object> getBoard();
+    Future<Object> getBoard(GameIdValueObject gameId);
 
-    Optional<FigureValueObject> figureAt(PositionValueObject position);
+    Optional<FigureValueObject> figureAt(GameIdValueObject gameId, PositionValueObject position);
 
 }

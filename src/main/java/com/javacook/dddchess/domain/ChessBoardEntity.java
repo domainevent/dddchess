@@ -36,14 +36,15 @@ public class ChessBoardEntity {
         if (!figureFrom.isPresent()) {
             throw new MoveException("No figure on " + move.from + " present");
         }
-        else if (lastMoveColor.isPresent() && figureFrom.get().color == lastMoveColor.get()) {
-            throw new MoveException("Invalid player: " + lastMoveColor);
+        else if ((lastMoveColor.isPresent() && figureFrom.get().color == lastMoveColor.get()) ||
+                 (!lastMoveColor.isPresent() && figureFrom.get().color == BLACK)) {
+            throw new MoveException("It's not your turn.");
         }
         // end validation
         setFigure(move.from, null);
         setFigure(move.to, figureFrom.get());
-        System.out.println("Color " + lastMoveColor);
-        System.out.println(toString());
+        //        System.out.println("Color " + lastMoveColor);
+        //        System.out.println(toString());
         return 0;
     }
 

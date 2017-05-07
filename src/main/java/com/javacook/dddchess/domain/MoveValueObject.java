@@ -12,7 +12,6 @@ public class MoveValueObject extends ValueObject {
 
     public MoveValueObject() {
         this((PositionValueObject)null, (PositionValueObject)null);
-        throw new IllegalStateException("This constructor should not be called here.");
     }
 
 

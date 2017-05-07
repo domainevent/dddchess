@@ -17,11 +17,12 @@ import javax.annotation.PreDestroy;
 import javax.ws.rs.ApplicationPath;
 import java.util.concurrent.TimeUnit;
 
-@ApplicationPath("dddtutorial")
+@ApplicationPath("dddchess")
 public class RestApplication extends ResourceConfig {
 
     private ActorSystem actorSystem;
     private ChessGameApi chessGameApi;
+
 
     public RestApplication() {
 
