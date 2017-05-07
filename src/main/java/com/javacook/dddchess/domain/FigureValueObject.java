@@ -4,17 +4,17 @@ import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlType
-public class FigureValueObject {
+public class FigureValueObject extends ValueObject {
 
     @XmlEnum
     public enum FigureEnum {
-        KING, QUEEN, ROCK, BISHOP, KNIGHT, PAWN;
+        KING, QUEEN, ROOK, BISHOP, KNIGHT, PAWN;
 
         public Character abbreviation() {
             switch (this) {
                 case KING: return 'K';
                 case QUEEN: return 'Q';
-                case ROCK: return 'R';
+                case ROOK: return 'R';
                 case BISHOP: return 'B';
                 case KNIGHT: return 'N';
                 case PAWN: return 'P';
@@ -50,41 +50,20 @@ public class FigureValueObject {
     public final ColorEnum color;
 
 
+    public FigureValueObject() {
+        this(null, null);
+        throw new IllegalStateException("This constructor should not be called here.");
+    }
+
+
     public FigureValueObject(FigureEnum figure, ColorEnum color) {
         this.figure = figure;
         this.color = color;
     }
 
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        FigureValueObject that = (FigureValueObject) o;
-
-        if (figure != that.figure) return false;
-        return color == that.color;
-    }
-
-
-    @Override
-    public int hashCode() {
-        int result = figure != null ? figure.hashCode() : 0;
-        result = 31 * result + (color != null ? color.hashCode() : 0);
-        return result;
-    }
-
-
-    @Override
-    public String toString() {
-        return "FigureValueObject{" +
-                "figure=" + figure +
-                ", color=" + color +
-                '}';
-    }
-
     public String abbreviation() {
         return "" + figure.abbreviation() + color.abbreviation();
     }
+
 }
