@@ -65,6 +65,7 @@ public class ChessBoardEntity {
 
 
     /**
+     * Initialized the board
      */
     public void initialize() {
         for (VertCoord vertCoord : VertCoord.values()) {
