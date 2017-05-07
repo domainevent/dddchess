@@ -6,11 +6,8 @@ import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import akka.pattern.AskTimeoutException;
 import com.javacook.dddchess.api.ChessGameApi;
-import com.javacook.dddchess.domain.FigureValueObject;
+import com.javacook.dddchess.domain.*;
 import com.javacook.dddchess.domain.FigureValueObject.ColorEnum;
-import com.javacook.dddchess.domain.MoveException;
-import com.javacook.dddchess.domain.MoveValueObject;
-import com.javacook.dddchess.domain.PositionValueObject;
 import com.javacook.dddchess.domain.PositionValueObject.HorCoord;
 import com.javacook.dddchess.domain.PositionValueObject.VertCoord;
 import com.webcohesion.enunciate.metadata.rs.ResponseCode;
@@ -138,8 +135,9 @@ public class RestService {
 
             public void onComplete(Throwable failure, Object result) {
                 if (failure == null) {
-                    log.info("board: " + result);
-                    resp.resume(Response.ok().entity(result).build());
+                    ChessBoardValueObject chessBoard = (ChessBoardValueObject)result;
+                    log.info("board: " + System.lineSeparator() + chessBoard);
+                    resp.resume(Response.ok().entity(chessBoard).build());
                 }
                 else {
                     log.error(failure, failure.getMessage());
