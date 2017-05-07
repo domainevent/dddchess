@@ -5,11 +5,8 @@ import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
 
 
-/**
- * Value Object
- */
 @XmlType
-public class PositionValueObject {
+public class PositionValueObject extends ValueObject {
 
     @XmlEnum
     public enum HorCoord {
@@ -48,6 +45,7 @@ public class PositionValueObject {
 
     public PositionValueObject() {
         this(null, null);
+        throw new IllegalStateException("This constructor should not be called here.");
     }
 
 
@@ -60,29 +58,6 @@ public class PositionValueObject {
     @Override
     public String toString() {
         return horCoord.toString() + vertCoord.toString();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        PositionValueObject positionValueObject = (PositionValueObject) o;
-
-        if (horCoord != positionValueObject.horCoord) return false;
-        return vertCoord == positionValueObject.vertCoord;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = horCoord != null ? horCoord.hashCode() : 0;
-        result = 31 * result + (vertCoord != null ? vertCoord.hashCode() : 0);
-        return result;
-    }
-
-    public static void main(String[] args) {
-        System.out.println(new PositionValueObject("a1"));
-        System.out.println(HorCoord.values().length);
     }
 
 }
