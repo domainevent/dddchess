@@ -68,7 +68,7 @@ public class ChessGameAggregate extends AbstractActor {
                     sender().tell(gameId, self());
                 })
                 .matchAny(command -> {
-                    log.warning("Received unknown command: {}", command);
+                    log.warning("received unknown command: {}", command);
                     final UnknownCommandException exception = new UnknownCommandException(command);
                     final Status.Failure failure = new Status.Failure(exception);
                     sender().tell(failure, self());
