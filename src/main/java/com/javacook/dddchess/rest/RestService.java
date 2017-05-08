@@ -7,7 +7,6 @@ import akka.event.LoggingAdapter;
 import akka.pattern.AskTimeoutException;
 import com.javacook.dddchess.api.ChessGameApi;
 import com.javacook.dddchess.domain.*;
-import com.javacook.dddchess.domain.FigureValueObject.ColorEnum;
 import com.javacook.dddchess.domain.PositionValueObject.HorCoord;
 import com.javacook.dddchess.domain.PositionValueObject.VertCoord;
 import com.webcohesion.enunciate.metadata.rs.ResponseCode;
@@ -26,8 +25,6 @@ import java.net.URI;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Optional;
-
-import static com.javacook.dddchess.domain.FigureValueObject.ColorEnum.WHITE;
 
 
 /**

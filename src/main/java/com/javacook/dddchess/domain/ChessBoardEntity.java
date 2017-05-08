@@ -1,13 +1,12 @@
 package com.javacook.dddchess.domain;
 
-import com.javacook.dddchess.domain.FigureValueObject.ColorEnum;
 import com.javacook.dddchess.domain.PositionValueObject.HorCoord;
 import com.javacook.dddchess.domain.PositionValueObject.VertCoord;
 
-import java.util.Arrays;
 import java.util.Optional;
 
-import static com.javacook.dddchess.domain.FigureValueObject.ColorEnum.*;
+import static com.javacook.dddchess.domain.ColorEnum.BLACK;
+import static com.javacook.dddchess.domain.ColorEnum.WHITE;
 import static com.javacook.dddchess.domain.FigureValueObject.FigureEnum.*;
 import static com.javacook.dddchess.domain.PositionValueObject.HorCoord.*;
 import static com.javacook.dddchess.domain.PositionValueObject.VertCoord.*;

@@ -1,7 +1,6 @@
 package com.javacook.dddchess.api;
 
 import com.javacook.dddchess.domain.*;
-import com.javacook.dddchess.domain.FigureValueObject.ColorEnum;
 import scala.concurrent.Future;
 
 import java.util.Optional;

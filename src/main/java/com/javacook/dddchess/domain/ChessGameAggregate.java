@@ -6,11 +6,8 @@ import akka.actor.Status;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import akka.japi.pf.ReceiveBuilder;
-import com.javacook.dddchess.domain.FigureValueObject.ColorEnum;
 
 import java.util.Optional;
-
-import static com.javacook.dddchess.domain.FigureValueObject.ColorEnum.WHITE;
 
 
 public class ChessGameAggregate extends AbstractActor {
