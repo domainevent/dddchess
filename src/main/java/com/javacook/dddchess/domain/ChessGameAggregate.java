@@ -48,23 +48,27 @@ public class ChessGameAggregate extends AbstractActor {
 
                 })
                 .match(GetMoveCommand.class, getMoveCommand -> {
+                    log.info("received GetMoveCommand: {}", getMoveCommand);
                     final Optional<MoveValueObject> move = this.getMove(getMoveCommand.moveIndex);
                     sender().tell(move, self());
                 })
-                .match(GetFigureCommand.class, getBoardCommand -> {
-                    final Optional<FigureValueObject> figure = this.getFigureAtPosition(getBoardCommand.position);
+                .match(GetFigureCommand.class, getFigureCommand -> {
+                    log.info("received GetFigureCommand: {}", getFigureCommand);
+                    final Optional<FigureValueObject> figure = this.getFigureAtPosition(getFigureCommand.position);
                     sender().tell(figure, self());
                 })
                 .match(GetBoardCommand.class, getBoardCommand -> {
+                    log.info("received GetBoardCommand: {}", getBoardCommand);
                     final ChessBoardValueObject board = this.getBoard();
                     sender().tell(board, self());
                 })
                 .match(NewGameCommand.class, newGameCommand -> {
+                    log.info("received NewGameCommand: {}", newGameCommand);
                     final GameIdValueObject gameId = this.newGame();
                     sender().tell(gameId, self());
                 })
                 .matchAny(command -> {
-                    log.warning("Received unknown message: " + command);
+                    log.warning("Received unknown command: {}", command);
                     final UnknownCommandException exception = new UnknownCommandException(command);
                     final Status.Failure failure = new Status.Failure(exception);
                     sender().tell(failure, self());
