@@ -131,7 +131,7 @@ public class RestService {
             final @Suspended AsyncResponse resp,
             final @Context Request request) {
 
-        log.info("Get board");
+        log.info("Get board with id {} ", gameId);
 
         // API-Call:
         final Future<Object> future = chessGameApi.getBoard(new GameIdValueObject(gameId));
