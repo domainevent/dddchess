@@ -102,7 +102,7 @@ public class RestService {
         log.info("Get figure at horCoord={}, vertCoord={}", horCoord, vertCoord);
 
         final PositionValueObject position = new PositionValueObject(horCoord, vertCoord);
-        final Optional<FigureValueObject> figure = chessGameApi.figureAt(null, position);
+        final Optional<FigureValueObject> figure = chessGameApi.figureAt(new GameIdValueObject(gameId), position);
 
         if (figure.isPresent()) {
             return figure.get();
@@ -134,7 +134,7 @@ public class RestService {
         log.info("Get board");
 
         // API-Call:
-        final Future<Object> future = chessGameApi.getBoard(null);
+        final Future<Object> future = chessGameApi.getBoard(new GameIdValueObject(gameId));
 
         future.onComplete(new OnComplete<Object>() {
 
@@ -186,7 +186,7 @@ public class RestService {
             final @NotNull @PathParam("index") int index) {
 
         log.info("Get the {}. move", index);
-        final Optional<MoveValueObject> move = chessGameApi.getMove(null, index);
+        final Optional<MoveValueObject> move = chessGameApi.getMove(new GameIdValueObject(gameId), index);
         if (move.isPresent()) {
             return move.get();
         }
@@ -238,7 +238,7 @@ public class RestService {
         log.info("Try to perform the performMove {}", move);
 
         // API-Call:
-        final Future<Object> future = chessGameApi.performMove(null, move);
+        final Future<Object> future = chessGameApi.performMove(new GameIdValueObject(gameId), move);
 
         future.onComplete(new OnComplete<Object>() {
 

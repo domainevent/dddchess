@@ -8,7 +8,16 @@ import java.util.UUID;
  */
 public class GameIdValueObject extends ValueObject {
 
-    public final String id = UUID.randomUUID().toString();
+    public final String id;
+
+
+    public GameIdValueObject(String id) {
+        this.id = id;
+    }
+
+    public GameIdValueObject() {
+        this(UUID.randomUUID().toString());
+    }
 
     @Override
     public String toString() {

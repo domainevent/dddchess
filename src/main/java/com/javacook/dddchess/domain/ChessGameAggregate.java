@@ -51,6 +51,10 @@ public class ChessGameAggregate extends AbstractActor {
                     final Optional<MoveValueObject> move = this.getMove(getMoveCommand.moveIndex);
                     sender().tell(move, self());
                 })
+                .match(GetFigureCommand.class, getBoardCommand -> {
+                    final Optional<FigureValueObject> figure = this.getFigureAtPosition(getBoardCommand.position);
+                    sender().tell(figure, self());
+                })
                 .match(GetBoardCommand.class, getBoardCommand -> {
                     final ChessBoardValueObject board = this.getBoard();
                     sender().tell(board, self());
@@ -59,7 +63,12 @@ public class ChessGameAggregate extends AbstractActor {
                     final GameIdValueObject gameId = this.newGame();
                     sender().tell(gameId, self());
                 })
-                .matchAny(o -> log.warning("Received unknown message!")).build()
+                .matchAny(command -> {
+                    log.warning("Received unknown message: " + command);
+                    final UnknownCommandException exception = new UnknownCommandException(command);
+                    final Status.Failure failure = new Status.Failure(exception);
+                    sender().tell(failure, self());
+                }).build()
         );
     }
 

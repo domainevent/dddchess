@@ -8,12 +8,10 @@ import com.javacook.dddchess.domain.*;
 import scala.concurrent.Await;
 import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
+import scala.concurrent.duration.FiniteDuration;
 
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-
-import static com.javacook.dddchess.domain.FigureValueObject.ColorEnum.BLACK;
-import static com.javacook.dddchess.domain.FigureValueObject.FigureEnum.KING;
 
 
 /**
@@ -75,7 +73,17 @@ public class ChessGameApiImpl implements ChessGameApi {
 
     @Override
     public Optional<FigureValueObject> figureAt(GameIdValueObject gameId, PositionValueObject position) {
-        return Optional.of(new FigureValueObject(KING, BLACK));
+        ActorSelection chessGameActor = actorSystem.actorSelection("/user/chessGame");
+        final FiniteDuration duration = Duration.create(2, TimeUnit.SECONDS);
+        Timeout timeout = new Timeout(duration);
+        final Future<Object> future = Patterns.ask(chessGameActor, new GetFigureCommand(position), timeout);
+        try {
+            final Object result = Await.result(future, duration);
+            return (Optional<FigureValueObject>)result;
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }
