@@ -206,7 +206,7 @@ public class RestService {
     @ManagedAsync
     public void performMove(
             final @NotNull @PathParam("gameId") String gameId,
-            final @FormParam("move") String move,
+            final @NotNull @FormParam("move") String move,
             final @Suspended AsyncResponse resp) {
 
         if (move == null) {
