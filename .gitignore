@@ -14,7 +14,7 @@ target/
 .mtj.tmp/
 
 # IDEs #
-.iml
+*.iml
 .idea
 .classpath
 .project
