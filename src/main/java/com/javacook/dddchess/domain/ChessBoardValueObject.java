@@ -1,8 +1,7 @@
 package com.javacook.dddchess.domain;
 
-import com.javacook.dddchess.domain.PositionValueObject.*;
-
-import java.util.Arrays;
+import com.javacook.dddchess.domain.PositionValueObject.HorCoord;
+import com.javacook.dddchess.domain.PositionValueObject.VertCoord;
 
 
 /**
@@ -12,13 +11,24 @@ public class ChessBoardValueObject extends ValueObject {
 
     protected final FigureValueObject[][] board;
 
-    public ChessBoardValueObject(FigureValueObject[][] board) {
-        this.board = board;
-    }
-
+    /**
+     * Default constructor
+     */
     public ChessBoardValueObject() {
         this(new FigureValueObject[HorCoord.values().length][VertCoord.values().length]);
     }
+
+    /**
+     * Copy Constructor
+     */
+    public ChessBoardValueObject(ChessBoardValueObject toCopy) {
+        this(toCopy.getBoard());
+    }
+
+    protected ChessBoardValueObject(FigureValueObject[][] board) {
+        this.board = board;
+    }
+
 
     public FigureValueObject[][] getBoard() {
         final FigureValueObject[][] copy =
@@ -31,6 +41,18 @@ public class ChessBoardValueObject extends ValueObject {
         return copy;
     }
 
+    protected void setFigureToPosition(PositionValueObject position, FigureValueObject figur) {
+        board[position.horCoord.ordinal()][position.vertCoord.ordinal()] = figur;
+    }
+
+    protected void setFigureToPosition(HorCoord h, VertCoord v,
+                                            FigureValueObject.FigureEnum figur, ColorEnum color) {
+        setFigureToPosition(new PositionValueObject(h,v), new FigureValueObject(figur, color));
+    }
+
+    protected FigureValueObject getFigureAtPosition(PositionValueObject position) {
+        return board[position.horCoord.ordinal()][position.vertCoord.ordinal()];
+    }
 
     @Override
     public String toString() {
