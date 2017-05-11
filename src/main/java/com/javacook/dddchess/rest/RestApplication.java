@@ -17,7 +17,7 @@ import javax.annotation.PreDestroy;
 import javax.ws.rs.ApplicationPath;
 import java.util.concurrent.TimeUnit;
 
-@ApplicationPath("dddchess")
+@ApplicationPath("api")
 public class RestApplication extends ResourceConfig {
 
     private ActorSystem actorSystem;
