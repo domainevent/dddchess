@@ -11,7 +11,7 @@ import java.util.Optional;
  */
 public interface ChessGameApi {
 
-    GameIdValueObject newGame();
+    GameIdValueObject newGame(Optional<String> note);
 
     Future<Object> performMove(GameIdValueObject gameId, MoveValueObject move);
 

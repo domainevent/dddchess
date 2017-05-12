@@ -66,14 +66,14 @@ public class RestService {
 
 
     /**
-     * @param color the
+     * @param note the
      */
     @POST
     @Path("games")
     @Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
-    public GameIdValueObject newGame(@FormParam("color") ColorEnum color) {
-        log.info("New game, player color {}", color);
-        return chessGameApi.newGame();
+    public GameIdValueObject newGame(@FormParam("note") String note) {
+        log.info("New game, note: '{}'", note);
+        return chessGameApi.newGame(Optional.ofNullable(note));
     }
 
 

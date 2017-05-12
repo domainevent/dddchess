@@ -27,7 +27,7 @@ public class ChessGameApiImpl implements ChessGameApi {
 
 
     @Override
-    public GameIdValueObject newGame() {
+    public GameIdValueObject newGame(Optional<String> note) {
         ActorSelection chessGameActor = actorSystem.actorSelection("/user/chessGame");
         Timeout timeout = new Timeout(Duration.create(2, "seconds"));
         Future<Object> future = Patterns.ask(chessGameActor, new NewGameCommand(), timeout);

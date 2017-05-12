@@ -42,7 +42,7 @@ public class ChessGameApiTest {
 
     @Test
     public void newGame() throws Exception {
-        final GameIdValueObject gameId = api.newGame();
+        final GameIdValueObject gameId = api.newGame(Optional.empty());
         Assert.assertNotNull(gameId);
         Assert.assertNotNull(gameId.id);
     }
@@ -61,7 +61,7 @@ public class ChessGameApiTest {
                     setFigureToPosition(posTo1, figure1);
                 }};
 
-        final GameIdValueObject gameId = api.newGame();
+        final GameIdValueObject gameId = api.newGame(Optional.empty());
         api.performMove(gameId, new MoveValueObject(posFrom1, posTo1));
         final Future<Object> future = api.getBoard(gameId);
 
@@ -74,7 +74,7 @@ public class ChessGameApiTest {
 
     @Test
     public void getMoveWithoutPreviousMove() throws Exception {
-        final GameIdValueObject gameId = api.newGame();
+        final GameIdValueObject gameId = api.newGame(Optional.of("My note"));
         final Optional<MoveValueObject> move = api.getMove(gameId, 0);
         Assert.assertFalse(move.isPresent());
     }
@@ -82,7 +82,7 @@ public class ChessGameApiTest {
 
     @Test
     public void getMoveWithPreviousMove() throws Exception {
-        final GameIdValueObject gameId = api.newGame();
+        final GameIdValueObject gameId = api.newGame(Optional.of("My note"));
         final MoveValueObject moveToPerform = new MoveValueObject("b1-c3");
         api.performMove(gameId, moveToPerform);
         final Optional<MoveValueObject> movePerformed = api.getMove(gameId, 0);
@@ -96,7 +96,7 @@ public class ChessGameApiTest {
     public void getBoard() throws Exception {
         final ChessBoardValueObject expected = MockDataFactory.createInitialChessBoard();
 
-        final GameIdValueObject gameId = api.newGame();
+        final GameIdValueObject gameId = api.newGame(Optional.of("My note"));
         final Future<Object> future = api.getBoard(gameId);
 
         final ChessBoardValueObject actual =
@@ -107,7 +107,7 @@ public class ChessGameApiTest {
 
     @Test
     public void figureAt() throws Exception {
-        final GameIdValueObject gameId = api.newGame();
+        final GameIdValueObject gameId = api.newGame(Optional.of("My note"));
         final Optional<FigureValueObject> figure1 = api.figureAt(gameId, new PositionValueObject("a1"));
         Assert.assertTrue(figure1.isPresent());
         final FigureValueObject expected1 = new FigureValueObject(ROOK, WHITE);
