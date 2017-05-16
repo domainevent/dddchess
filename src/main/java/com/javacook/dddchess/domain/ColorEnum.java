@@ -1,5 +1,8 @@
 package com.javacook.dddchess.domain;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+
 import javax.xml.bind.annotation.XmlEnum;
 
 
@@ -10,6 +13,7 @@ import javax.xml.bind.annotation.XmlEnum;
 public enum ColorEnum {
     WHITE, BLACK;
 
+    @JsonValue
     public Character abbreviation() {
         switch (this) {
             case WHITE: return 'w';
@@ -18,6 +22,17 @@ public enum ColorEnum {
                 throw new IllegalArgumentException("Unexpected enum " + this);
         }
     }
+
+    @JsonCreator
+    public ColorEnum fromAbbrev(Character c) {
+        switch (c) {
+            case 'w': return WHITE;
+            case 'b': return BLACK;
+        }
+        throw new IllegalArgumentException("Unexpected abbreviation character " + this);
+    }
+
+
 
     public ColorEnum swap() {
         switch (this) {
