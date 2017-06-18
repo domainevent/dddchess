@@ -113,7 +113,6 @@ public class RestService {
 
     /**
      * Returns the figure at the position (<code>horCoord</code>, <code>vertCord</code>)
-     * @return the chess figure at the given coordinates
      */
     @GET
     @Path("games/{gameId}/board")
